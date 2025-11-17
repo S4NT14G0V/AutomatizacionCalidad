@@ -1,0 +1,28 @@
+package org.calidadsoftware.tasks;
+
+import net.serenitybdd.screenplay.Actor;
+import net.serenitybdd.screenplay.Performable;
+import net.serenitybdd.screenplay.Task;
+import net.serenitybdd.screenplay.Tasks;
+import org.calidadsoftware.interfaces.InventoryPage;
+import org.calidadsoftware.interactions.ClickOn;
+
+public class AddToCart implements Task {
+
+    private final int quantity;
+
+    public AddToCart(int quantity) {
+        this.quantity = quantity;
+    }
+
+    @Override
+    public <T extends Actor> void performAs(T actor) {
+        if (quantity >= 1) {
+            actor.attemptsTo(ClickOn.target(InventoryPage.ADD_TO_CART_FIRST));
+        }
+    }
+
+    public static Performable products(int quantity) {
+        return Tasks.instrumented(AddToCart.class, quantity);
+    }
+}

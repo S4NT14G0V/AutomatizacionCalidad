@@ -1,0 +1,32 @@
+package org.calidadsoftware.stepdefinitions;
+
+import io.cucumber.java.en.*;
+import org.calidadsoftware.questions.ProductListVisible;
+import org.calidadsoftware.questions.ProductsSorted;
+import org.calidadsoftware.tasks.SortProducts;
+
+import static net.serenitybdd.screenplay.GivenWhenThen.seeThat;
+import static org.hamcrest.Matchers.is;
+
+public class CatalogoStepDefinitions {
+
+    @When("ordena productos")
+    public void ordena_productos() {
+        CommonStepDefinitions.actor.attemptsTo(SortProducts.by("Name (A to Z)")); // Asumir orden alfabético
+    }
+
+    @When("accede al catalogo de productos")
+    public void accede_catalogo_productos() {
+        // ya está despues de login
+    }
+
+    @Then("debe visualizar la lista de productos de la tienda")
+    public void visualiza_lista_productos() {
+        CommonStepDefinitions.actor.should(seeThat(ProductListVisible.is(), is(true)));
+    }
+
+    @Then("el sistema muestra los productos ordenados")
+    public void muestra_productos_ordenados() {
+        CommonStepDefinitions.actor.should(seeThat(ProductsSorted.by("Name (A to Z)"), is(true)));
+    }
+}

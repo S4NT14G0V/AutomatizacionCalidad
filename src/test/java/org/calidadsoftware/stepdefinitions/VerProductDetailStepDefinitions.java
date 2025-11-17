@@ -1,0 +1,21 @@
+package org.calidadsoftware.stepdefinitions;
+
+import io.cucumber.java.en.*;
+import org.calidadsoftware.questions.ProductDetailsVisible;
+import org.calidadsoftware.tasks.ViewProductDetail;
+
+import static net.serenitybdd.screenplay.GivenWhenThen.seeThat;
+import static org.hamcrest.Matchers.is;
+
+public class VerProductDetailStepDefinitions {
+
+    @When("selecciona un producto")
+    public void selecciona_producto() {
+        CommonStepDefinitions.actor.attemptsTo(ViewProductDetail.ofFirstProduct());
+    }
+
+    @Then("visualiza toda la información detallada del producto")
+    public void visualiza_informacion_detallada() {
+        CommonStepDefinitions.actor.should(seeThat(ProductDetailsVisible.are(), is(true)));
+    }
+}
