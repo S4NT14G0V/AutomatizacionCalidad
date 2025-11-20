@@ -1,7 +1,7 @@
 Feature: Inicio de sesión
-Como: usuario registrado
-Quiero iniciar sesion en la tienda
-Para poder acceder a mi cuenta
+  Como: usuario registrado
+  Quiero iniciar sesion en la tienda
+  Para poder acceder a mi cuenta
 
   Scenario: Usuario registrado inicia sesión exitosamente
     Given que el usuario está en la página de login
