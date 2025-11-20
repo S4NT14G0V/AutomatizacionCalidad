@@ -14,6 +14,10 @@ import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import net.serenitybdd.screenplay.abilities.BrowseTheWeb;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Properties;
+
 public class LoginStepDefinitions {
 
     @Given("que el usuario está en la página de login")
@@ -21,7 +25,8 @@ public class LoginStepDefinitions {
         WebDriver browser = DriverFactory.firefox();
         CommonStepDefinitions.browser = browser;
         CommonStepDefinitions.actor.can(BrowseTheWeb.with(browser));
-        CommonStepDefinitions.actor.attemptsTo(OpenTheApplication.on("https://www.saucedemo.com"));
+        String appUrl = getAppUrl();
+        CommonStepDefinitions.actor.attemptsTo(OpenTheApplication.on(appUrl));
     }
 
     @When("ingresa su usuario {string} y contraseña {string}")
@@ -48,5 +53,18 @@ public class LoginStepDefinitions {
             default:
                 throw new IllegalArgumentException("Resultado no reconocido: " + resultado);
         }
+    }
+
+    private String getAppUrl() {
+        Properties props = new Properties();
+        try (InputStream input = getClass().getClassLoader().getResourceAsStream("serenity.properties")) {
+            if (input != null) {
+                props.load(input);
+                return props.getProperty("app.url", "https://www.saucedemo.com");
+            }
+        } catch (IOException e) {
+            // error
+        }
+        return "https://www.saucedemo.com";
     }
 }
