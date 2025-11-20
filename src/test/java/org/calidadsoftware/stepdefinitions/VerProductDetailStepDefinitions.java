@@ -8,7 +8,7 @@ import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import static net.serenitybdd.screenplay.GivenWhenThen.seeThat;
 
-// definiciones de pasos para ver el detalle de un producto
+// definiciones de pasos para ver el detalle de un producto .
 public class VerProductDetailStepDefinitions {
 
     @When("selecciona un producto")

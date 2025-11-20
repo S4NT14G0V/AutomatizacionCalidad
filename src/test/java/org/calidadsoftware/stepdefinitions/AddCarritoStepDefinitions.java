@@ -10,7 +10,7 @@ import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import static net.serenitybdd.screenplay.GivenWhenThen.seeThat;
 
-// definiciones de pasos para agregar productos al carrito
+// definiciones de pasos para agregar productos al carrito .
 public class AddCarritoStepDefinitions {
 
     @When("agrega productos al carrito")

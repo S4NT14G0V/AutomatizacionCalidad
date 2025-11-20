@@ -9,7 +9,7 @@ import net.serenitybdd.screenplay.Performable;
 import net.serenitybdd.screenplay.Task;
 import net.serenitybdd.screenplay.Tasks;
 
-// tarea para abrir el menu de la pagina de inventario
+// tarea para abrir el menu de la pagina de inventario .
 public class OpenMenu implements Task {
 
     @Override
