@@ -1,7 +1,5 @@
 package org.calidadsoftware.stepdefinitions;
 
-import org.calidadsoftware.utils.WaitFor;
-import org.calidadsoftware.interfaces.InventoryPage;
 import org.calidadsoftware.questions.CartItemCount;
 import org.calidadsoftware.tasks.AddToCart;
 import static org.hamcrest.Matchers.equalTo;
