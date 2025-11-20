@@ -10,7 +10,7 @@ import org.openqa.selenium.firefox.FirefoxOptions;
 // fabrica de drivers para configurar diferentes navegadores
 public class DriverFactory {
 
-    // crea edge driver con ventana maximizada (nota: metodo se llama chrome pero retorna edge)
+    // crea edge driver con ventana maximizada
     public static WebDriver chrome() {
         WebDriverManager.edgedriver().setup();
         EdgeOptions options = new EdgeOptions();

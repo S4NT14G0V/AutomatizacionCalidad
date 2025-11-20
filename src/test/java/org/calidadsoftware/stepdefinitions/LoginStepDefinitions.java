@@ -40,7 +40,7 @@ public class LoginStepDefinitions {
         switch (resultado.toLowerCase()) {
             case "success":
                 assertTrue(
-                        "se redirigió al inventario",
+                        "no se redirigió al inventario",
                         CommonStepDefinitions.browser.getCurrentUrl().contains("inventory"));
                 break;
 
