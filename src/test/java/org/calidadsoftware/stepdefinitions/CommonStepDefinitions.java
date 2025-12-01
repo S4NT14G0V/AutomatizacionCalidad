@@ -4,7 +4,7 @@ import io.cucumber.java.en.Given;
 import net.serenitybdd.screenplay.Actor;
 import net.serenitybdd.screenplay.abilities.BrowseTheWeb;
 import org.calidadsoftware.drivers.DriverFactory;
-import org.calidadsoftware.tasks.Login;
+import org.calidadsoftware.tasks.LoginToMedicalAdmin;
 import org.calidadsoftware.utils.OpenTheApplication;
 import org.openqa.selenium.WebDriver;
 
@@ -30,12 +30,13 @@ public class CommonStepDefinitions {
     @Given("que el usuario ha iniciado sesion")
     public void usuario_ha_iniciado_sesion() {
         openApplication();
-        actor.attemptsTo(Login.with("standard_user", "secret_sauce"));
+        actor.attemptsTo(LoginToMedicalAdmin.withCredentials("admin1@medicaladmin.com", "Admin123!"));
     }
 
     private static String getAppUrl() {
         Properties props = new Properties();
-        try (InputStream input = CommonStepDefinitions.class.getClassLoader().getResourceAsStream("serenity.properties")) {
+        try (InputStream input = CommonStepDefinitions.class.getClassLoader()
+                .getResourceAsStream("serenity.properties")) {
             if (input != null) {
                 props.load(input);
                 return props.getProperty("app.url");
