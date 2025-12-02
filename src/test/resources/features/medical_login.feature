@@ -11,5 +11,5 @@ Feature: Login of Medical Admin
 
     Examples:
       | email                   | password  | Mensaje                      |
-      | admin1@medicaladmin.com | Admin123! | Inicio de Sesión Exitoso     |
+      | demo@medical.com | demo123 | Inicio de Sesión Exitoso     |
       | wrong@medoude.com       | wrong123! | Error    |

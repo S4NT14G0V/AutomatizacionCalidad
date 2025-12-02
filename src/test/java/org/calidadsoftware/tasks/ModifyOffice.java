@@ -1,19 +1,25 @@
 package org.calidadsoftware.tasks;
 
+import java.time.Duration;
 import java.util.Map;
 
-import org.calidadsoftware.interactions.ClickOn;
-import org.calidadsoftware.interactions.EnterText;
+import org.calidadsoftware.interactions.ClickOfficeButton;
+import org.calidadsoftware.interactions.WaitAndClick;
+import org.calidadsoftware.interactions.WaitAndEnterText;
+import org.calidadsoftware.interactions.SelectFromDropdown;
 import org.calidadsoftware.interfaces.MedicalDashboardPage;
-import org.calidadsoftware.utils.WaitFor;
-import org.openqa.selenium.JavascriptExecutor;
 
 import net.serenitybdd.screenplay.Actor;
 import net.serenitybdd.screenplay.Task;
 import net.serenitybdd.screenplay.Tasks;
-import net.serenitybdd.screenplay.abilities.BrowseTheWeb;
-import net.serenitybdd.screenplay.actions.Clear;
+import net.serenitybdd.screenplay.waits.WaitUntil;
 
+import static net.serenitybdd.screenplay.matchers.WebElementStateMatchers.*;
+
+/**
+ * Task representing the business process of modifying an existing office
+ * Uses proper Serenity Screenplay pattern with robust synchronization
+ */
 public class ModifyOffice implements Task {
 
     private final String officeName;
@@ -30,118 +36,74 @@ public class ModifyOffice implements Task {
 
     @Override
     public <T extends Actor> void performAs(T actor) {
-        JavascriptExecutor js = (JavascriptExecutor) BrowseTheWeb.as(actor).getDriver();
+        // Click the modify button for the specific office
+        actor.attemptsTo(
+                ClickOfficeButton.toModify(officeName)
+        );
 
-        actor.attemptsTo(WaitFor.sleep(3)); // Wait for the office list to update after creation
+        // Wait for edit dialog to open
+        actor.attemptsTo(
+                WaitUntil.the(MedicalDashboardPage.EDIT_DIALOG, isVisible())
+                        .forNoMoreThan(Duration.ofSeconds(10))
+        );
 
-        // Scroll to bottom first
-        js.executeScript("window.scrollTo(0, document.body.scrollHeight)");
-        actor.attemptsTo(WaitFor.sleep(2));
-
-        // Find the button and click it with full event simulation
-        js.executeScript(
-                "var h3 = Array.from(document.querySelectorAll('h3')).find(h => h.textContent.includes('Consultorio " + officeName + "'));" +
-                "if (h3) {" +
-                "  var buttonContainer = h3.closest('.flex.items-start');" +
-                "  if (buttonContainer) {" +
-                "    var modifyButton = Array.from(buttonContainer.querySelectorAll('button')).find(b => b.textContent.includes('Modificar'));" +
-                "    if (modifyButton) {" +
-                "      modifyButton.scrollIntoView({behavior: 'instant', block: 'center'});" +
-                "      var events = ['mouseenter', 'mouseover', 'mousedown', 'mouseup', 'click'];" +
-                "      events.forEach(eventType => {" +
-                "        var event = new MouseEvent(eventType, {" +
-                "          bubbles: true," +
-                "          cancelable: true," +
-                "          view: window" +
-                "        });" +
-                "        modifyButton.dispatchEvent(event);" +
-                "      });" +
-                "    }" +
-                "  }" +
-                "}");
-
-        actor.attemptsTo(WaitFor.sleep(2)); // Wait for modal to open
-        actor.attemptsTo(WaitFor.visible(MedicalDashboardPage.OFFICE_NAME_INPUT, 10));
-
-        // Update fields based on provided data
+        // Update name if provided
         if (updatedData.containsKey("nombre")) {
-            String newNumber = updatedData.get("nombre");
-            // Use JavaScript to set the value since React controls it
-            js.executeScript(
-                "var input = document.querySelector('#number, #name');" +
-                "if (input) {" +
-                "  var nativeInputValueSetter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, 'value').set;" +
-                "  nativeInputValueSetter.call(input, arguments[0]);" +
-                "  var event = new Event('input', { bubbles: true });" +
-                "  input.dispatchEvent(event);" +
-                "}", newNumber);
-            actor.attemptsTo(WaitFor.sleep(1));
+            actor.attemptsTo(
+                    WaitAndEnterText.inField(
+                            updatedData.get("nombre"),
+                            MedicalDashboardPage.EDIT_OFFICE_NAME_INPUT
+                    )
+            );
         }
 
+        // Update specialty if provided
         if (updatedData.containsKey("especialidad")) {
-            String especialidad = updatedData.get("especialidad");
-            js.executeScript(
-                    "var dialog = document.querySelector('[role=\"dialog\"]');" +
-                    "if (dialog) {" +
-                    "  var typeButton = dialog.querySelector('#type');" +
-                    "  if (typeButton) {" +
-                    "    var select = typeButton.previousElementSibling;" +
-                    "    if (select && select.tagName === 'SELECT') {" +
-                    "      for(var i=0; i<select.options.length; i++) {" +
-                    "        if(select.options[i].value === arguments[0]) {" +
-                    "          select.selectedIndex = i;" +
-                    "          select.dispatchEvent(new Event('change', { bubbles: true }));" +
-                    "          break;" +
-                    "        }" +
-                    "      }" +
-                    "    }" +
-                    "  }" +
-                    "}",
-                    especialidad);
-            actor.attemptsTo(WaitFor.sleep(1));
+            actor.attemptsTo(
+                    SelectFromDropdown.option(
+                            updatedData.get("especialidad"),
+                            MedicalDashboardPage.EDIT_OFFICE_SPECIALTY_SELECT
+                    )
+            );
         }
 
+        // Update location if provided
         if (updatedData.containsKey("sede")) {
-            String sede = updatedData.get("sede");
-            js.executeScript(
-                    "var dialog = document.querySelector('[role=\"dialog\"]');" +
-                    "if (dialog) {" +
-                    "  var locationButton = dialog.querySelector('#location');" +
-                    "  if (locationButton) {" +
-                    "    var select = locationButton.previousElementSibling;" +
-                    "    if (select && select.tagName === 'SELECT') {" +
-                    "      for(var i=0; i<select.options.length; i++) {" +
-                    "        if(select.options[i].value === arguments[0]) {" +
-                    "          select.selectedIndex = i;" +
-                    "          select.dispatchEvent(new Event('change', { bubbles: true }));" +
-                    "          break;" +
-                    "        }" +
-                    "      }" +
-                    "    }" +
-                    "  }" +
-                    "}",
-                    sede);
-            actor.attemptsTo(WaitFor.sleep(1));
+            actor.attemptsTo(
+                    SelectFromDropdown.option(
+                            updatedData.get("sede"),
+                            MedicalDashboardPage.EDIT_OFFICE_LOCATION_SELECT
+                    )
+            );
         }
 
-        // Click Guardar button simulating real user interaction
-        actor.attemptsTo(WaitFor.sleep(1));
-        js.executeScript(
-            "var dialog = document.querySelector('[role=\"dialog\"]');" +
-            "if (dialog) {" +
-            "  var saveButton = Array.from(dialog.querySelectorAll('button')).find(b => b.textContent.includes('Guardar'));" +
-            "  if (saveButton) {" +
-            "    saveButton.focus();" +
-            "    saveButton.dispatchEvent(new MouseEvent('mouseenter', { bubbles: true, cancelable: true }));" +
-            "    saveButton.dispatchEvent(new MouseEvent('mouseover', { bubbles: true, cancelable: true }));" +
-            "    saveButton.dispatchEvent(new MouseEvent('mousedown', { bubbles: true, cancelable: true }));" +
-            "    saveButton.dispatchEvent(new MouseEvent('mouseup', { bubbles: true, cancelable: true }));" +
-            "    saveButton.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true }));" +
-            "    saveButton.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', code: 'Enter', keyCode: 13, bubbles: true }));" +
-            "    saveButton.dispatchEvent(new KeyboardEvent('keypress', { key: 'Enter', code: 'Enter', keyCode: 13, bubbles: true }));" +
-            "    saveButton.dispatchEvent(new KeyboardEvent('keyup', { key: 'Enter', code: 'Enter', keyCode: 13, bubbles: true }));" +
-            "  }" +
-            "}");
-        actor.attemptsTo(WaitFor.sleep(2));
+        // Update status if provided
+        if (updatedData.containsKey("estado")) {
+            actor.attemptsTo(
+                    SelectFromDropdown.option(
+                            updatedData.get("estado"),
+                            MedicalDashboardPage.EDIT_OFFICE_STATUS_SELECT
+                    )
+            );
+        }
+
+        // Click save and wait for operation to complete
+        // Wait for dashboard to be visible again (dialog closes after save)
+        actor.attemptsTo(
+                WaitAndClick.on(MedicalDashboardPage.EDIT_SAVE_BUTTON)
+        );
+
+        // Give React time to process the save and update the DOM
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            // Ignore
+        }
+
+        // Verify we're back on the dashboard
+        actor.attemptsTo(
+                WaitUntil.the(MedicalDashboardPage.DASHBOARD_CONTAINER, isVisible())
+                        .forNoMoreThan(Duration.ofSeconds(10))
+        );
     }
 }
